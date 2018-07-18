@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from models import Server , db
+from models import Server ,User, db
 
 class AdminBlueprint(Blueprint):
     views = None
@@ -25,3 +25,4 @@ class AdminBlueprint(Blueprint):
 
 easyops_admin = AdminBlueprint('easyops_admin',__name__,url_prefix='/admin')
 easyops_admin.add_view(ModelView(Server,db.session))
+easyops_admin.add_view(ModelView(User,db.session))

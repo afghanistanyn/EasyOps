@@ -6,13 +6,25 @@ from sqlalchemy.sql import text , func
 db=SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=True)
+	email = db.Column(db.String(100))
+    pwd = db.Column(db.String(100))
+    group = db.Column(db.Integer)
+    info = db.Column(db.Text)
+    is_admin = db.Column(db.Boolean)
+    state = db.Column(db.String(255))
+	updatetime = db.Column(db.TIMESTAMP(True), nullable=True)
+    createtime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
 
     def __repr__(self):
-       return '<User %r>' % self.username
+        return '<User: %r>' % self.name
 
+    def check_pwd(self, pwd):
+        from werkzeug.security import check_password_hash
+        return check_password_hash(self.pwd, pwd)
 
 class Server(db.Model):
     __tablename__ = "servers"
