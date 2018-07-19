@@ -1,3 +1,7 @@
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 from easyops import app
 from models import db
 from models import Server

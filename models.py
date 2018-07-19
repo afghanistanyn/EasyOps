@@ -10,21 +10,25 @@ class User(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
-	email = db.Column(db.String(100))
+    email = db.Column(db.String(100))
     pwd = db.Column(db.String(100))
-    group = db.Column(db.Integer)
+    group = db.Column(db.String(20))
     info = db.Column(db.Text)
     is_admin = db.Column(db.Boolean)
     state = db.Column(db.String(255))
-	updatetime = db.Column(db.TIMESTAMP(True), nullable=True)
+    updatetime = db.Column(db.TIMESTAMP(True), nullable=True)
     createtime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
 
     def __repr__(self):
         return '<User: %r>' % self.name
 
-    def check_pwd(self, pwd):
+    def check_pwd_hash(self, pwd):
         from werkzeug.security import check_password_hash
         return check_password_hash(self.pwd, pwd)
+
+    def check_pwd_plain(self , pwd):
+        from werkzeug.security import safe_str_cmp
+        return safe_str_cmp(self.pwd , pwd)
 
 class Server(db.Model):
     __tablename__ = "servers"
