@@ -38,15 +38,17 @@
 
 {% block c_script %}	
 
+<-->
 <script>
   $(function () {
     $('#servers_info').DataTable({
       'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
+      'lengthChange': true,
+      "lengthMenu": [[15, 20,  50 , -1], [15,20,50,"All"]],
+      'searching'   : true,
       'ordering'    : true,
       'info'        : true,
-      'autoWidth'   : false
+      'autoWidth'   : true
     })
   })
 </script>

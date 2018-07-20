@@ -6,11 +6,16 @@ from flask import session
 
 app = Flask(__name__)
 
+app.config.from_pyfile('conf\mysql.conf')
+MYSQL_HOST = app.config.get('MYSQL_HOST')
+MYSQL_PORT = app.config.get('MYSQL_PORT')
+MYSQL_USER = app.config.get('MYSQL_USER')
+MYSQL_PASSWD = app.config.get('MYSQL_PASSWD')
+MYSQL_DB = app.config.get('MYSQL_DB')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://easyops:easyops@192.168.1.27:3306/easyops'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///easyops.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://%s:%s@%s:%s/%s" % (MYSQL_USER,MYSQL_PASSWD,MYSQL_HOST,MYSQL_PORT,MYSQL_DB)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
+app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = 'thisissecretkey'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.debug = True
