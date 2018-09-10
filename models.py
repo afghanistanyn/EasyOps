@@ -14,7 +14,7 @@ class User(db.Model):
     pwd = db.Column(db.String(100))
     group = db.Column(db.String(20))
     info = db.Column(db.Text)
-    is_admin = db.Column(db.Boolean)
+    role = db.Column(db.String(20))
     state = db.Column(db.String(255))
     updatetime = db.Column(db.TIMESTAMP(True), nullable=True)
     createtime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))

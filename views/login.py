@@ -41,14 +41,16 @@ def login_req(f):
 def admin_req(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'is_admin' not in session:
+        if 'user_name' in session and 'is_admin' not in session:
+            print 'role admin require , please login as admin'
             return redirect(url_for('login.login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
 
 @mod.route('/logout/')
 def logout():
-    session.pop('user_id',None)
+    session.pop('user_name',None)
+    session.pop('user_group', None)
     session.pop('is_admin',None)
     return redirect('/index')
 
@@ -65,8 +67,9 @@ def login():
         elif not user.check_pwd_plain(password):
             flash(u'密码错误！')
         else:
-            session['user_id'] = user.id
-            if user.is_admin == True:
+            session['user_name'] = user.name
+            session['user_group'] = user.group
+            if user.role == 'admin':
                 session['is_admin'] = "true"
             return redirect(request.args.get('next')) if request.args.get('next') else redirect(url_for('index.index'))
     return render_template('login.html', form=form)

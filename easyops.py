@@ -4,9 +4,33 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import User
 from flask import session
 
+
 app = Flask(__name__)
 
-app.config.from_pyfile('conf\mysql.conf')
+
+app.config.from_pyfile('conf/ldap.conf')
+app.config['LDAP_LOGIN_VIEW'] = app.config.get('LDAP_LOGIN_VIEW')
+app.config['LDAP_OPENLDAP'] = app.config.get('LDAP_OPENLDAP')
+app.config['LDAP_REALM_NAME'] = app.config.get('LDAP_REALM_NAME')
+app.config['LDAP_HOST'] = app.config.get('LDAP_HOST')
+app.config['LDAP_BASE_DN'] = app.config.get('LDAP_BASE_DN')
+app.config['LDAP_USER_BASE_DN'] = app.config.get('LDAP_USER_BASE_DN')
+app.config['LDAP_GROUP_BASE_DN'] = app.config.get('LDAP_GROUP_BASE_DN')
+app.config['LDAP_USER_OBJECT_FILTER'] = app.config.get('LDAP_USER_OBJECT_FILTER')
+
+# Admin configuration (not allow anonymous)
+app.config['LDAP_USERNAME'] = app.config.get('LDAP_USERNAME')
+app.config['LDAP_PASSWORD'] = app.config.get('LDAP_PASSWORD')
+
+# Group configuration
+app.config['LDAP_GROUP_OBJECT_FILTER'] = app.config.get('LDAP_GROUP_OBJECT_FILTER')
+app.config['LDAP_GROUP_MEMBERS_FIELD'] = app.config.get('LDAP_GROUP_MEMBERS_FIELD')
+app.config['LDAP_GROUP_ID_FIELD'] = app.config.get('LDAP_GROUP_ID_FIELD')
+app.config['LDAP_GROUP_MEMBER_FILTER'] = app.config.get('LDAP_GROUP_MEMBER_FILTER')
+app.config['LDAP_GROUP_MEMBER_FILTER_FIELD'] = app.config.get('LDAP_GROUP_MEMBER_FILTER_FIELD')
+
+
+app.config.from_pyfile('conf/mysql.conf')
 MYSQL_HOST = app.config.get('MYSQL_HOST')
 MYSQL_PORT = app.config.get('MYSQL_PORT')
 MYSQL_USER = app.config.get('MYSQL_USER')
@@ -16,10 +40,13 @@ MYSQL_DB = app.config.get('MYSQL_DB')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://%s:%s@%s:%s/%s" % (MYSQL_USER,MYSQL_PASSWD,MYSQL_HOST,MYSQL_PORT,MYSQL_DB)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+
 app.config['SECRET_KEY'] = 'thisissecretkey'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.debug = True
 toolbar = DebugToolbarExtension(app)
+
+
 
 from views import index
 app.register_blueprint(index.mod)
@@ -33,17 +60,35 @@ app.register_blueprint(Admin.easyops_admin)
 from views import login
 app.register_blueprint(login.mod)
 
+from views.zdnst_ldap import zdnst_ldap
+
+app.zdnst_ldap = zdnst_ldap(app)
+
+from views import ldap_login
+app.register_blueprint(ldap_login.mod)
+
+
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
 
+@app.errorhandler(401)
+def page_unauthorized(error):
+    return render_template('401.html'), 401
+
+
 @app.before_request
 def load_user():
-    if session.__contains__('user_id'):
-        user = User.query.filter_by(id=session["user_id"]).first()
+    if session.__contains__('user_name'):
+        user = session["user_name"]
     else:
-        user = User(name="guest",group="anonymous",is_admin=False)
-        session.pop('user_id', None)
-        session.pop('is_admin', None)
+        user = None
+
+        if session.__contains__('user_name'):
+            session.pop('user_name', None)
+        if session.__contains__('user_group'):
+            session.pop('user_group', None)
+        if session.__contains__('is_admin'):
+            session.pop('is_admin', None)
 
     g.user = user
