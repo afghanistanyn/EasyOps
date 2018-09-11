@@ -7,6 +7,10 @@ from flask import session
 
 app = Flask(__name__)
 
+app.config.from_pyfile('conf/jenkins.conf')
+app.config['JENKINS_URL'] = app.config.get('JENKINS_URL')
+app.config['JENKINS_USER'] = app.config.get('JENKINS_USER')
+app.config['JENKINS_PASSWD'] = app.config.get('JENKINS_PASSWD')
 
 app.config.from_pyfile('conf/ldap.conf')
 app.config['LDAP_LOGIN_VIEW'] = app.config.get('LDAP_LOGIN_VIEW')
