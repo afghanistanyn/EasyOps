@@ -81,6 +81,7 @@ def page_unauthorized(error):
 def load_user():
     if session.__contains__('user_name'):
         user = session["user_name"]
+
     else:
         user = None
 

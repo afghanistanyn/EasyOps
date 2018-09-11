@@ -1,7 +1,7 @@
 from flask import Blueprint , session , redirect , url_for, abort
 from flask_admin import Admin , expose , AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from models import Server, User, db
+from models import *
 
 
 class AdminBlueprint(Blueprint):
@@ -42,7 +42,7 @@ class EasyOpsAdminServerView(ModelView):
     column_searchable_list = (Server.name, Server.lan_ip, Server.lan_mac, Server.services_tag)
 
     def is_accessible(self):
-        print "user_id: " + str(session.get('user_id'))
+        print "user_name: " + str(session.get('user_name'))
         print "is_admin: " + str(session.get('is_admin'))
         if session.get('is_admin') == "true":
             return True
@@ -57,7 +57,7 @@ class EasyOpsAdminUserView(ModelView):
     column_exclude_list = ('pwd')
 
     def is_accessible(self):
-        print "user_id: " + str(session.get('user_id'))
+        print "user_name: " + str(session.get('user_name'))
         print "is_admin: " + str(session.get('is_admin'))
         if session.get('is_admin') == "true":
             return True
@@ -72,3 +72,6 @@ easyops_admin = AdminBlueprint('easyops_admin',__name__, url_prefix='/admin')
 
 easyops_admin.add_view(EasyOpsAdminServerView(Server, db.session))
 easyops_admin.add_view(EasyOpsAdminUserView(User, db.session))
+easyops_admin.add_view(ModelView(Publish,db.session))
+easyops_admin.add_view(ModelView(Jenkins_build,db.session))
+easyops_admin.add_view(ModelView(Jenkins_job,db.session))

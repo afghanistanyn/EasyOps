@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text , func
 
+
 db=SQLAlchemy()
 
 class User(db.Model):
@@ -51,18 +52,65 @@ class Server(db.Model):
 
 
     def __init__(self,name,lan_ip,lan_mac="",wan_ip="",wan_mac="",osrelease="",ssh_port=54110,ssh_passwd="",system="",idc="",virtual="",services_tag=""):
-                self.name = name
-                self.lan_ip = lan_ip
-                self.lan_mac = lan_mac
-                self.wan_ip = wan_ip
-                self.wan_mac = wan_mac
-                self.osrelease = osrelease
-                self.ssh_port = ssh_port
-                self.ssh_passwd = ssh_passwd
-                self.system = system
-                self.idc = idc
-                self.virtual = virtual
-                self.services_tag = services_tag
+        self.name = name
+        self.lan_ip = lan_ip
+        self.lan_mac = lan_mac
+        self.wan_ip = wan_ip
+        self.wan_mac = wan_mac
+        self.osrelease = osrelease
+        self.ssh_port = ssh_port
+        self.ssh_passwd = ssh_passwd
+        self.system = system
+        self.idc = idc
+        self.virtual = virtual
+        self.services_tag = services_tag
 
     def __repr__(self):
                 return '<Server %r>' % self.name
+
+
+
+class Publish(db.Model):
+    __tablename__ = 'publish'
+    publish_id = db.Column(db.Integer, primary_key = True, autoincrement=True)
+    publish_name = db.Column(db.String(128),nullable=False)
+    publish_create_by = db.Column(db.String(64),nullable=True)
+    publish_confirm_by = db.Column(db.String(64),nullable=True)
+    publish_state = db.Column(db.String(4),nullable=True)
+    publish_details = db.Column(db.String(128),nullable=True)
+    publish_content = db.Column(db.String(128),nullable=True)
+    publish_roll_back_support =  db.Column(db.String(1),nullable=True)
+    updatetime = db.Column(db.TIMESTAMP(True), nullable=True)
+    createtime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
+
+
+    tasks = db.relationship('Jenkins_build',backref='Publish', lazy=True)
+
+    def __repr__(self):
+        return '<Publish %r>' % self.publish_id
+
+
+class Jenkins_build(db.Model):
+    __tablename__ = 'jenkins_build'
+    build_id = db.Column(db.Integer, primary_key = True, autoincrement=True)
+    publish_id = db.Column(db.Integer, db.ForeignKey('publish.publish_id'), nullable=False)
+    build_job_name = db.Column(db.String(128),nullable=False,unique=True)
+    build_number = db.Column(db.Integer,nullable=False)
+    build_params = db.Column(db.String(128),nullable=True)
+    build_state = db.Column(db.String(8),nullable=True)
+    updatetime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
+
+    def __repr__(self):
+        return '<Jenkin_Build %r>' % self.build_job_name + "# " + str(self.build_number)
+
+class Jenkins_job(db.Model):
+    __tablename__ = 'jenkins_job'
+    job_id = db.Column(db.Integer , primary_key = True,autoincrement=True)
+    job_name = db.Column(db.String(32),unique=True)
+    jon_description = db.Column(db.String(128),nullable=True)
+    job_params = db.Column(db.String(128),nullable=True)
+    job_state = db.Column(db.String(1),nullable=True)
+    updatetime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
+
+    def __repr__(self):
+        return '<Jenkins_job %r>' % self.job_name
