@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from flask import Blueprint, render_template, redirect, session, url_for, request, flash, jsonify
 from models import User
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, CsrfProtect
 from wtforms import StringField, PasswordField, SubmitField, SelectField, SelectMultipleField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError
 from werkzeug.security import generate_password_hash
@@ -54,7 +54,7 @@ def logout():
     session.pop('is_admin',None)
     return redirect('/index')
 
-@mod.route('/login', methods=['GET', 'POST'])
+@mod.route('/login', methods= ['GET','POST'])
 def login():
     form = UserLoginForm()
     if form.validate_on_submit():

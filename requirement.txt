@@ -8,3 +8,7 @@ Jinja2==2.10
 MySQL-python==1.2.5
 pyldap==2.4.45
 Flask-SimpleLDAP==1.2.0
+jenkinsapi==0.3.6
+# pip install git+https://github.com/afghanistanyn/git-url-parse , a hacked version
+git-url-parse==1.1.1.dev4
+GitPython==2.1.11

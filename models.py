@@ -107,10 +107,17 @@ class Jenkins_job(db.Model):
     __tablename__ = 'jenkins_job'
     job_id = db.Column(db.Integer , primary_key = True,autoincrement=True)
     job_name = db.Column(db.String(32),unique=True)
-    jon_description = db.Column(db.String(128),nullable=True)
+    job_description = db.Column(db.String(128),nullable=True)
     job_params = db.Column(db.String(128),nullable=True)
     job_state = db.Column(db.String(1),nullable=True)
     updatetime = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('NOW()'))
+
+
+    def __init__(self,job_name="default_job_name",job_description="",job_params="",job_state=""):
+        self.job_name = job_name
+        self.job_description = job_description
+        self.job_params = job_params
+        self.job_state = job_state
 
     def __repr__(self):
         return '<Jenkins_job %r>' % self.job_name

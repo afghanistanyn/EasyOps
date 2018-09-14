@@ -1,2 +1,41 @@
 在本文件夹下创建配置文件
 1.mysql.conf
+2.jenkins.con
+3.ldap.conf
+4.git.conf
+
+
+# git conf
+GIT_USER = ""
+GIT_PASSWD =  ""
+
+
+# ldap conf
+LDAP_OPENLDAP = True
+LDAP_REALM_NAME = 'OpenLDAP Authentication'
+LDAP_LOGIN_VIEW = 'ldap_login.login'
+LDAP_HOST = ''
+LDAP_BASE_DN = ''
+LDAP_USER_BASE_DN = ''
+LDAP_GROUP_BASE_DN = ''
+LDAP_USER_OBJECT_FILTER = '(uid=%s)'
+LDAP_USERNAME = ''
+LDAP_PASSWORD = ''
+LDAP_GROUP_OBJECT_FILTER = "(gidNumber=%s)"
+LDAP_GROUP_MEMBERS_FIELD = "memberUid"
+LDAP_GROUP_ID_FIELD = "gidNumber"
+LDAP_GROUP_MEMBER_FILTER = "(gidNumber=%s)"
+LDAP_GROUP_MEMBER_FILTER_FIELD = "cn"
+
+# mysql conf
+MYSQL_HOST=''
+MYSQL_PORT=3306
+MYSQL_USER=''
+MYSQL_PASSWD=''
+MYSQL_DB=''
+
+# jenkins conf , jenkins_user should hava priv to access all jobs
+JENKINS_URL = ""
+JENKINS_USER =  ""
+JENKINS_PASSWD =  ""
+JENKINS_GITREPO_URL_PATTERN = "repoUrl[\s\S]*?=(.*git\')"
